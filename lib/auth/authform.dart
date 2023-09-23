@@ -34,14 +34,16 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   submitform(String email, String password, String username)async{
+    print('line 37');
     final auth = FirebaseAuth.instance;
     UserCredential authResult;
     try{
         if(isLoginPage){
+          print('sign in');
           authResult = await auth.signInWithEmailAndPassword(email: email, password: password);
-
         }
         else{
+          print('create user');
           authResult = await auth.createUserWithEmailAndPassword(email: email, password: password);
           String? uid = authResult.user?.uid;
           await FirebaseFirestore.instance.collection('users').doc(uid).set({
@@ -51,6 +53,7 @@ class _AuthFormState extends State<AuthForm> {
         }
     }
     catch(err) {
+      print('got error');
       print(err);
     }
 
@@ -127,7 +130,7 @@ class _AuthFormState extends State<AuthForm> {
                         if (value.isEmpty) {}
                       },
                       onSaved: (value) {
-                        _email = value!;
+                        _password = value!;
                       },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
