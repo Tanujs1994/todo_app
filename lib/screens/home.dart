@@ -29,7 +29,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<TaskModel> myAllTodos = [];
-
+ bool showProgressBar = true;
   String uid = '';
   @override
   void initState() {
@@ -38,8 +38,9 @@ class _HomeState extends State<Home> {
     getDataFromFirebase();
   }
 
-  getDataFromFirebase() {
+  getDataFromFirebase() async {
     final db = FirebaseFirestore.instance;
+    await Future.delayed(Duration(seconds: 1));
     db.collection("tasks").doc(uid).collection("my tasks").snapshots().listen(
       (querySnapshot) {
         print("Successfully completed");
@@ -59,6 +60,7 @@ class _HomeState extends State<Home> {
         }
         setState(() {
           myAllTodos = fromServer;
+          showProgressBar = false;
         });
       },
       onError: (e) => print("Error completing: $e"),
@@ -75,14 +77,21 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if(showProgressBar){
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('TODO'),
       ),
-      body: ListView.builder(
+      body: 
+      ListView.builder(
         itemCount: myAllTodos.length,
         itemBuilder: (ctx, indx) {
-          return InkWell(
+          return 
+          InkWell(
             onTap: () {
               Navigator.push(
                   context,
