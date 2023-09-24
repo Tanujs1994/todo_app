@@ -1,14 +1,22 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_app/screens/add_task.dart';
 
-class TaskModel{
+class TaskModel {
   String id;
   String description;
   String title;
+  String time;
 
-  TaskModel({required this.id, required this.description, required this.title});
+  TaskModel(
+      {required this.id,
+      required this.description,
+      required this.title,
+      required this.time});
 }
 
 class Home extends StatefulWidget {
@@ -19,7 +27,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   List<TaskModel> myAllTodos = [];
 
   String uid = '';
@@ -30,23 +37,31 @@ class _HomeState extends State<Home> {
     getDataFromFirebase();
   }
 
-  getDataFromFirebase(){
+  getDataFromFirebase() {
     final db = FirebaseFirestore.instance;
-    db.collection("tasks").doc(uid).collection("my tasks").get().then(
-  (querySnapshot) {
-    print("Successfully completed");
-    List<TaskModel> fromServer = [];
-    for (var docSnapshot in querySnapshot.docs) {
-      print('${docSnapshot.id} => ${docSnapshot.data()}');
-      fromServer.add(TaskModel(id: docSnapshot.id, description: docSnapshot.get('description'), title: docSnapshot.get('title')));
-    }
-    setState(() {
-      myAllTodos = fromServer;
-    });
-  },
-  onError: (e) => print("Error completing: $e"),
-);
-
+    db.collection("tasks").doc(uid).collection("my tasks").snapshots().listen(
+      (querySnapshot) {
+        print("Successfully completed");
+        List<TaskModel> fromServer = [];
+        for (var docSnapshot in querySnapshot.docs) {
+          print('${docSnapshot.id} => ${docSnapshot.data()}');
+          String timeIs = docSnapshot.get('time');
+          final dateTime = DateTime.parse(timeIs);
+          final dateFormat = DateFormat('dd MMMM yyyy HH:mm:ss:a');
+          timeIs = dateFormat.format(dateTime);
+          fromServer.add(TaskModel(
+            id: docSnapshot.id,
+            description: docSnapshot.get('description'),
+            title: docSnapshot.get('title'),
+            time: timeIs,
+          ));
+        }
+        setState(() {
+          myAllTodos = fromServer;
+        });
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
   }
 
   getuid() {
@@ -65,15 +80,56 @@ class _HomeState extends State<Home> {
       ),
       body: ListView.builder(
         itemCount: myAllTodos.length,
-        itemBuilder: (ctx, indx){
+        itemBuilder: (ctx, indx) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: Column(
-              children: [
-                Text(myAllTodos[indx].id),
-                Text(myAllTodos[indx].title),
-                Text(myAllTodos[indx].description),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Card(
+                color: Colors.blue,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        myAllTodos[indx].time,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            myAllTodos[indx].title,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Container(
+                            child: IconButton(
+                                onPressed: () async {
+                                  
+                                  await FirebaseFirestore.instance.collection('tasks').doc(uid).collection('my tasks').doc( myAllTodos[indx].id).delete();
+                                },
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        myAllTodos[indx].description,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         },
