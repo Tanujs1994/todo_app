@@ -30,7 +30,12 @@ class _AuthFormState extends State<AuthForm> {
     if (validity) {
       _formkey.currentState?.save();
       submitform(_email, _password, _username);
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('invalid'))
+      );
     }
+
   }
 
   submitform(String email, String password, String username)async{
@@ -58,7 +63,8 @@ class _AuthFormState extends State<AuthForm> {
     }
 
   }
-
+ 
+ //-----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -84,7 +90,10 @@ class _AuthFormState extends State<AuthForm> {
                         key: ValueKey('username'),
                         validator: (value) {
                           if (value == null) return 'Incorret username';
-                          if (value.isEmpty) {}
+                          if (value.isEmpty) {
+                            return 'Incorret username';
+                          }
+                          return null;
                         },
                         onSaved: (value) {
                           _username = value!;
@@ -105,7 +114,10 @@ class _AuthFormState extends State<AuthForm> {
                       key: ValueKey('email'),
                       validator: (value) {
                         if (value == null) return 'Incorret Email';
-                        if (value.isEmpty || !value.contains('@')) {}
+                        if (value.isEmpty || !value.contains('@')) {
+                          return 'Incorrect email';
+                        }
+                        return null;
                       },
                       onSaved: (value) {
                         _email = value!;
@@ -127,7 +139,10 @@ class _AuthFormState extends State<AuthForm> {
                       key: ValueKey('password'),
                       validator: (value) {
                         if (value == null) return 'Incorret password';
-                        if (value.isEmpty) {}
+                        if (value.isEmpty) {
+                          return 'Incorret password';
+                        }
+                        return null;
                       },
                       onSaved: (value) {
                         _password = value!;
