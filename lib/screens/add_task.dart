@@ -12,20 +12,28 @@ class AddTask extends StatefulWidget {
   State<AddTask> createState() => __AddTaskState();
 }
 
-class __AddTaskState extends State<AddTask> { 
+class __AddTaskState extends State<AddTask> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
- addtasktofirebase() async {
-  FirebaseAuth auth = FirebaseAuth.instance;
-  User? user = auth.currentUser;
-  String? uid = user?.uid;
-  var time = DateTime.now();
-  await FirebaseFirestore.instance.collection('tasks').doc(uid).collection('my tasks').doc(time.toString()).set({
-    'title':titleController.text, 'description': descriptionController.text,'time':time.toString()});
- Fluttertoast.showToast(msg: "Data Added");
- }
-
+  addtasktofirebase() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    String? uid = user?.uid;
+    var time = DateTime.now();
+    await FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(uid)
+        .collection('my tasks')
+        .doc(time.toString())
+        .set({
+      'title': titleController.text,
+      'description': descriptionController.text,
+      'time': time.toString(),
+      'timestamp': time
+    });
+    Fluttertoast.showToast(msg: "Data Added");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +73,13 @@ class __AddTaskState extends State<AddTask> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: (){
-                 addtasktofirebase();
-                }, child: Text('Add Task',style: TextStyle(fontSize: 18),)),
+                    onPressed: () {
+                      addtasktofirebase();
+                    },
+                    child: Text(
+                      'Add Task',
+                      style: TextStyle(fontSize: 18),
+                    )),
               ),
             ],
           )),

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/screens/add_task.dart';
+import 'package:todo_app/screens/description.dart';
 
 class TaskModel {
   String id;
@@ -81,12 +82,19 @@ class _HomeState extends State<Home> {
       body: ListView.builder(
         itemCount: myAllTodos.length,
         itemBuilder: (ctx, indx) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Card(
-                color: Colors.blue,
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Description(
+                          title: myAllTodos[indx].title,
+                          description: myAllTodos[indx].description)));
+            },
+            child: Card(
+              color: Colors.blue,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -109,8 +117,12 @@ class _HomeState extends State<Home> {
                           Container(
                             child: IconButton(
                                 onPressed: () async {
-                                  
-                                  await FirebaseFirestore.instance.collection('tasks').doc(uid).collection('my tasks').doc( myAllTodos[indx].id).delete();
+                                  await FirebaseFirestore.instance
+                                      .collection('tasks')
+                                      .doc(uid)
+                                      .collection('my tasks')
+                                      .doc(myAllTodos[indx].id)
+                                      .delete();
                                 },
                                 icon: Icon(
                                   Icons.delete,
