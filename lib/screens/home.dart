@@ -30,7 +30,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<TaskModel> myAllTodos = [];
 
- bool showProgressBar = true;
+  bool showProgressBar = true;
   String uid = '';
   @override
   void initState() {
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if(showProgressBar){
+    if (showProgressBar) {
       return Center(
         child: CircularProgressIndicator(),
       );
@@ -87,17 +87,17 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text('TODO'),
         actions: [
-          IconButton(onPressed: ()async{
-            await FirebaseAuth.instance.signOut();
-          }, icon: Icon(Icons.logout))
+          IconButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+              },
+              icon: Icon(Icons.logout))
         ],
       ),
-      body: 
-      ListView.builder(
+      body: ListView.builder(
         itemCount: myAllTodos.length,
         itemBuilder: (ctx, indx) {
-          return 
-          InkWell(
+          return InkWell(
             onTap: () {
               Navigator.push(
                   context,

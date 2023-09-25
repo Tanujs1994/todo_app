@@ -1,6 +1,5 @@
 // ignore_for_file: unused_field, prefer_const_constructors
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,55 +30,50 @@ class _AuthFormState extends State<AuthForm> {
     if (validity) {
       _formkey.currentState?.save();
       submitform(_email, _password, _username);
-    }else{
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('invalid'))
-      );
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('invalid')));
     }
- 
   }
 
-  submitform(String email, String password, String username)async{
+  submitform(String email, String password, String username) async {
     print('line 37');
     final auth = FirebaseAuth.instance;
     UserCredential authResult;
-    try{
-
+    try {
       setState(() {
-   showProgressBar = true;
- });
-        if(isLoginPage){
-          print('sign in');
-          authResult = await auth.signInWithEmailAndPassword(email: email, password: password);
+        showProgressBar = true;
+      });
+      if (isLoginPage) {
+        print('sign in');
+        authResult = await auth.signInWithEmailAndPassword(
+            email: email, password: password);
         setState(() {
-   showProgressBar = false;
- });
-        }
-
-        else{
-          print('create user');
-          authResult = await auth.createUserWithEmailAndPassword(email: email, password: password);
-          String? uid = authResult.user?.uid;
-          await FirebaseFirestore.instance.collection('users').doc(uid).set({
-            'username':username,
-            'email': email
-          });
-          setState(() {
-   showProgressBar = false;
- });
-        }
-    }
-    catch(err) {
+          showProgressBar = false;
+        });
+      } else {
+        print('create user');
+        authResult = await auth.createUserWithEmailAndPassword(
+            email: email, password: password);
+        String? uid = authResult.user?.uid;
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .set({'username': username, 'email': email});
+        setState(() {
+          showProgressBar = false;
+        });
+      }
+    } catch (err) {
       print('got error');
       print(err);
     }
-
   }
- 
- //-----------------------------------------------------------
+
+  //-----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
-    if (showProgressBar){
+    if (showProgressBar) {
       return Center(
         child: CircularProgressIndicator(),
       );

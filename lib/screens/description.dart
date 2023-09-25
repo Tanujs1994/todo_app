@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers
+
 import 'package:flutter/material.dart';
 
 class Description extends StatelessWidget {
@@ -22,13 +24,22 @@ class Description extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                child: Text(title,style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: Colors.white),), 
+                child: Text(
+                  title,
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                child: Text(description,style: TextStyle(fontSize: 18,color: Colors.white),), 
+                child: Text(
+                  description,
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
               ),
             )
           ],
