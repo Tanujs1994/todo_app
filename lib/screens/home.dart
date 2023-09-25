@@ -29,6 +29,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<TaskModel> myAllTodos = [];
+
  bool showProgressBar = true;
   String uid = '';
   @override
@@ -85,6 +86,11 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Text('TODO'),
+        actions: [
+          IconButton(onPressed: ()async{
+            await FirebaseAuth.instance.signOut();
+          }, icon: Icon(Icons.logout))
+        ],
       ),
       body: 
       ListView.builder(

@@ -19,6 +19,7 @@ class _AuthFormState extends State<AuthForm> {
   var _password = '';
   var _username = '';
   bool isLoginPage = false;
+  bool showProgressBar = false;
 
   //-------------------------------------
 
@@ -35,7 +36,7 @@ class _AuthFormState extends State<AuthForm> {
         SnackBar(content: Text('invalid'))
       );
     }
-
+ 
   }
 
   submitform(String email, String password, String username)async{
@@ -43,10 +44,18 @@ class _AuthFormState extends State<AuthForm> {
     final auth = FirebaseAuth.instance;
     UserCredential authResult;
     try{
+
+      setState(() {
+   showProgressBar = true;
+ });
         if(isLoginPage){
           print('sign in');
           authResult = await auth.signInWithEmailAndPassword(email: email, password: password);
+        setState(() {
+   showProgressBar = false;
+ });
         }
+
         else{
           print('create user');
           authResult = await auth.createUserWithEmailAndPassword(email: email, password: password);
@@ -55,6 +64,9 @@ class _AuthFormState extends State<AuthForm> {
             'username':username,
             'email': email
           });
+          setState(() {
+   showProgressBar = false;
+ });
         }
     }
     catch(err) {
@@ -67,6 +79,11 @@ class _AuthFormState extends State<AuthForm> {
  //-----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
+    if (showProgressBar){
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
